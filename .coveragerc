@@ -1,0 +1,6 @@
+[run]
+source =
+  rcache_torm
+
+omit =
+  test/*
