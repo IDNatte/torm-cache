@@ -7,7 +7,7 @@ from torm_cache.TormSerializer import torm_serializer
 
 
 class TORMCache(BaseCache):
-    def __init__(self, autoremove=None, serializer=None, path=None, **kwargs):
+    def __init__(self, autoremove=True, serializer=None, path=None, **kwargs):
         super().__init__(**kwargs)
         skwargs = {"serializer": serializer, **kwargs} if serializer else kwargs
         self.redirects = TORMDict(kind="redirects", autoremove=autoremove, path=path, **skwargs)
@@ -26,16 +26,26 @@ class TORMDict(BaseStorage):
         self._Query = tinydb.Query()
 
     def __getitem__(self, key):
-        cache = self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
-        if cache.is_expired:
-            self._db.remove(self._Query.key == key)
+        try:
+            cache = self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
+            if cache.is_expired:
+                self._db.remove(self._Query.key == key)
 
-        return self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
+            return self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
+
+        except Exception as _:
+            # if isinstance(e, NoneType):
+            #     return None
+            # raise e
+            return None
 
     def __setitem__(self, key, value):
         try:
             self._db.insert({"key": key, "data": orjson.loads(self.serialize(value).decode())})
-        except ValueError as _:
+        except Exception as _:
+            # if isinstance(e, ValueError):
+            #     pass
+            # raise e
             pass
 
     def __delitem__(self, key):

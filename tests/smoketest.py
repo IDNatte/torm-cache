@@ -1,33 +1,3 @@
-# import datetime
-# import pathlib
-
-# import requests_cache
-
-# from torm_cache.TormCache import TORMCache
-
-# DEBUG_DATABASE = pathlib.Path('tests/dump/test.ndb')
-
-# backend = TORMCache(path=DEBUG_DATABASE, autoremove=True)
-# r = requests_cache.CachedSession(backend=backend, expire_after=1)
-
-# def test():
-#     print(datetime.timedelta(minutes=1).seconds)
-#     c = r.get('https://httpbin.org/get')
-#     # c = r.get('https://web.tapinkab.go.id')
-#     # print(len())
-#     # for x in r.cache.responses:
-#     #     print(x)
-
-#     if c.status_code == 200:
-#         json_data = c.json()
-#         print(json_data)
-#         # r.cache.clear()
-
-
-# if __name__=="__main__":
-#     test()
-
-
 import concurrent.futures as fu
 import pprint
 from datetime import timedelta
@@ -36,26 +6,32 @@ import requests_cache
 
 from torm_cache.TormCache import TORMCache
 
-backend = TORMCache(autoremove=True, path='./dump/test.ndb')
+backend = TORMCache(autoremove=False, path='./tests/dump/test.ndb')
 
-r = requests_cache.CachedSession(backend=backend, expire_after=timedelta(minutes=5).seconds)
+r = requests_cache.CachedSession(backend=backend, expire_after=timedelta(seconds=1).seconds)
 
 max = 100
 
 def test(count):
-    print(count)
-    c = r.get(f'https://httpbin.org/anything/{count + 1}')
+    print(f"data : {count + 1}")
+    url = f'https://httpbin.org/anything/data{count + 1}'
+    c = r.get(url)
+    # c = r.get('https://httpbin.org/absolute-redirect/2')
+    #
+    #
+    print(r.cache.contains(url=url))
+
     if c.status_code == 200:
         data = c.json()
         return data
 
 
 def main():
-    with fu.ThreadPoolExecutor(max_workers=5) as threader:
-        threader.map(test, range(max))
+    with fu.ThreadPoolExecutor(max_workers=max/2) as threader:
+        res = threader.map(test, range(max))
 
 
-    # pprint.pprint(list(res))
+    pprint.pprint(list(res))
 
 
 if __name__ == '__main__':
