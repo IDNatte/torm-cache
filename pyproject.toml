@@ -1,6 +1,6 @@
 [project]
 name = "torm-cache"
-version = "0.1.0"
+version = "0.1.2"
 description = "requests-cache with backend TinyDB using TOrM storage"
 authors = [{ name = "IDNatte", email = "idnatte@gmail.com" }]
 readme = "README.md"
