@@ -26,7 +26,6 @@ class TORMDict(BaseStorage):
         self._Query = tinydb.Query()
 
     def __getitem__(self, key):
-        # removal of {kind} data from database
         cache = self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
         if cache.is_expired:
             self._db.remove(self._Query.key == key)
@@ -34,7 +33,10 @@ class TORMDict(BaseStorage):
         return self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
 
     def __setitem__(self, key, value):
-        self._db.insert({"key": key, "data": orjson.loads(self.serialize(value).decode())})
+        try:
+            self._db.insert({"key": key, "data": orjson.loads(self.serialize(value).decode())})
+        except ValueError as _:
+            pass
 
     def __delitem__(self, key):
         self._db.remove(self._Query.key == key)
