@@ -1,6 +1,6 @@
 [run]
 source =
-  rcache_torm
+  torm_cache
 
 omit =
   test/*
