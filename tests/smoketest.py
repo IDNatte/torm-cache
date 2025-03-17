@@ -8,9 +8,9 @@ from torm_cache.TormCache import TORMCache
 
 backend = TORMCache(autoremove=False, path='./tests/dump/test.ndb')
 
-r = requests_cache.CachedSession(backend=backend, expire_after=timedelta(seconds=1).seconds)
+r = requests_cache.CachedSession(backend=backend, expire_after=timedelta(minutes=5).seconds)
 
-max = 100
+max = 500
 
 def test(count):
     print(f"data : {count + 1}")

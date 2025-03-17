@@ -1,3 +1,5 @@
+from threading import RLock
+
 import orjson
 import tinydb
 from requests_cache.backends import BaseCache, BaseStorage
@@ -19,6 +21,7 @@ class TORMDict(BaseStorage):
 
         self._path = path
         self._autoremove = autoremove
+        self._lock = RLock()
 
         # TinyDB storage
         _db = tinydb.TinyDB(self._path, storage=TormStorage)
@@ -27,26 +30,27 @@ class TORMDict(BaseStorage):
 
     def __getitem__(self, key):
         try:
-            cache = self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
-            if cache.is_expired:
-                self._db.remove(self._Query.key == key)
+            with self._lock:
+                cache = self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
+                if cache.is_expired:
+                    self._db.remove(self._Query.key == key)
 
-            return self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
+                return self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
 
         except Exception as _:
-            # if isinstance(e, NoneType):
-            #     return None
-            # raise e
             return None
 
     def __setitem__(self, key, value):
+        self._lock.acquire()
+
         try:
             self._db.insert({"key": key, "data": orjson.loads(self.serialize(value).decode())})
+
         except Exception as _:
-            # if isinstance(e, ValueError):
-            #     pass
-            # raise e
             pass
+
+        finally:
+            self._lock.release()
 
     def __delitem__(self, key):
         self._db.remove(self._Query.key == key)
