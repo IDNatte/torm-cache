@@ -6,7 +6,7 @@ authors = [{ name = "IDNatte", email = "idnatte@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.9,<3.13"
 dependencies = [
-  "torm-storage (>=1.0.0,<2.0.0)",
+  "torm-storage (>=1.2.0,<2.0.0)",
   "requests-cache (>=1.2.1,<2.0.0)",
   "orjson (>=3.10.15,<4.0.0)",
 ]
