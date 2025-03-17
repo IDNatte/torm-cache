@@ -31,9 +31,10 @@ class TORMDict(BaseStorage):
     def __getitem__(self, key):
         try:
             with self._lock:
-                cache = self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
-                if cache.is_expired:
-                    self._db.remove(self._Query.key == key)
+                if self._autoremove:
+                    cache = self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
+                    if cache.is_expired:
+                        self._db.remove(self._Query.key == key)
 
                 return self.deserialize(key, self.serialize(self._db.get(self._Query.key == key).get('data')))
 
