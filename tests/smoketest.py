@@ -1,5 +1,6 @@
 import concurrent.futures as fu
 import pprint
+import random
 from datetime import timedelta
 
 import requests_cache
@@ -8,13 +9,13 @@ from torm_cache.TormCache import TORMCache
 
 backend = TORMCache(autoremove=False, path='./tests/dump/test.ndb')
 
-r = requests_cache.CachedSession(backend=backend, expire_after=timedelta(minutes=5).seconds)
+r = requests_cache.CachedSession(backend=backend, expire_after=timedelta(seconds=1).seconds)
 
 max = 500
 
 def test(count):
     print(f"data : {count + 1}")
-    url = f'https://httpbin.org/anything/data{count + 1}'
+    url = f'https://httpbin.org/anything/data{random.randint(1, 5000)}'
     c = r.get(url)
     # c = r.get('https://httpbin.org/absolute-redirect/2')
     #
