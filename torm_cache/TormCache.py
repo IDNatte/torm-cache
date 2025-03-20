@@ -43,7 +43,8 @@ class TORMDict(BaseStorage):
 
     def __setitem__(self, key, value):
         with self._lock:
-            self._db.insert({"key": key, "data": orjson.loads(self.serialize(value).decode())})
+            if not self._db.get(self._Query.key == key):
+                self._db.insert({"key": key, "data": orjson.loads(self.serialize(value).decode())})
 
     def __delitem__(self, key):
         self._db.remove(self._Query.key == key)
