@@ -1,14 +1,14 @@
 [project]
 name = "torm-cache"
-version = "0.1.10"
+version = "0.1.11"
 description = "requests-cache with backend TinyDB using TOrM storage"
 authors = [{ name = "IDNatte", email = "idnatte@gmail.com" }]
 readme = "README.md"
-requires-python = ">=3.9,<3.13"
+requires-python = ">=3.9,<4.0"
 dependencies = [
-  "torm-storage (>=1.2.0,<2.0.0)",
-  "requests-cache (>=1.2.1,<2.0.0)",
-  "orjson (>=3.10.15,<4.0.0)",
+    "torm-storage (>=1.3.0,<2.0.0)",
+    "requests-cache (>=1.2.1,<2.0.0)",
+    "orjson (>=3.10.15,<4.0.0)",
 ]
 
 [tool.poetry.group.dev.dependencies]
